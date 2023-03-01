@@ -7,8 +7,15 @@ import java.sql.*;
 public class UserDao {//abstract 상속을 사용
     ConnectionMaker connectionMaker;
     //private Connection c와 같이 싱글톤객체에서는 상태가 변하는 변수를 갖으면 안된다
+
+    public UserDao(){}
     public UserDao(ConnectionMaker connectionMaker){
         //connectionMaker = new DConnectionMaker()의 형태에서 벗어나 객체의 클래스 종속성을 없애기 위해 외부에서 객체를 주입
+        this.connectionMaker = connectionMaker;
+    }
+
+    //수정자 메소드를 이용한 생성자 주입
+    public void setConnectionMaker(ConnectionMaker connectionMaker){
         this.connectionMaker = connectionMaker;
     }
     public void add(User user) throws ClassNotFoundException, SQLException{

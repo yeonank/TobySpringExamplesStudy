@@ -1,5 +1,8 @@
-package org.example.user.dao;
+package org.example.user.dao.factory;
 
+import org.example.user.dao.ConnectionMaker;
+import org.example.user.dao.DConnectionMaker;
+import org.example.user.dao.UserDao;
 import org.example.user.domain.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +12,10 @@ public class DaoFactory {//팩토리를 통해 객체를 생성해서 반환함�
 
     @Bean//Ioc용 오브젝트 생성 메소드
     public UserDao userDao(){
-        return new UserDao(connectionMaker());
+        UserDao userDao = new UserDao();
+        userDao.setConnectionMaker(connectionMaker());
+        return userDao;
+        //return new UserDao(connectionMaker());
     }
 
     @Bean

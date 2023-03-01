@@ -1,4 +1,4 @@
-package org.example;
+package org.example.user.dao.tests;
 
 import org.example.user.dao.factory.DaoFactory;
 import org.example.user.dao.UserDao;
@@ -7,7 +7,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 import java.sql.SQLException;
 
-public class Main {
+public class UserDaoTest {
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
         /*ConnectionMaker connectionMaker = new DConnectionMaker();
         //connection 객체를 외부에서 주입함으로 클라이언트에게 책임을 떠넘김(메인에서는 어떤 객체를 생성하는행 모름)
