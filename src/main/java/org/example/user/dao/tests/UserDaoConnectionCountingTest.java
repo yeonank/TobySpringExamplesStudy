@@ -19,6 +19,10 @@ public class UserDaoConnectionCountingTest {
         user.setId("id1");
         user.setName("연정");
         user.setPassword("password1");
+
+        user.setId("id2");
+        user.setName("연정");
+        user.setPassword("password1");
         dao.add(user);//connection 생성
         ////////////
 

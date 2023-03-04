@@ -19,6 +19,7 @@ public class UserDao {//abstract 상속을 사용
         this.connectionMaker = connectionMaker;
     }
     public void add(User user) throws ClassNotFoundException, SQLException{
+        //
         Connection c = connectionMaker.makeConnection();
         //timezone 설정, jdbc drvier import
         PreparedStatement ps = c.prepareStatement("insert into users(id, name, password) values(?,?,?)");
@@ -34,6 +35,7 @@ public class UserDao {//abstract 상속을 사용
     }
 
     public User get(String id) throws ClassNotFoundException, SQLException{
+        //
         Connection c = connectionMaker.makeConnection();
 
         PreparedStatement ps = c.prepareStatement(
