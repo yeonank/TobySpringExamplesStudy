@@ -1,6 +1,10 @@
 package org.example.user.dao;
 
+import org.example.Exception.NoReturnException;
 import org.example.user.domain.User;
+import org.springframework.beans.NullValueInNestedPathException;
+
+import static org.springframework.core.NestedRuntimeException.*;
 
 import javax.xml.transform.Result;
 import java.sql.*;
@@ -34,7 +38,7 @@ public class UserDao {//abstract 상속을 사용
 
     }
 
-    public User get(String id) throws ClassNotFoundException, SQLException{
+    public User get(String id) throws ClassNotFoundException, SQLException, NoReturnException {
         Connection c = connectionMaker.makeConnection();
 
         PreparedStatement ps = c.prepareStatement(
@@ -43,15 +47,20 @@ public class UserDao {//abstract 상속을 사용
         ps.setString(1, id);
 
         ResultSet rs = ps.executeQuery();
-        rs.next();
-        User user = new User();
-        user.setId(rs.getString("id"));
-        user.setName(rs.getString("name"));
-        user.setPassword(rs.getString("password"));
+
+        User user = null;
+        if(rs.next()){
+            user = new User();
+            user.setId(rs.getString("id"));
+            user.setName(rs.getString("name"));
+            user.setPassword(rs.getString("password"));
+        }
 
         rs.close();
         ps.close();
         c.close();
+
+        if (user == null) throw new NoReturnException("매치하는 데이터가 없습니다");
 
         return user;
     }
