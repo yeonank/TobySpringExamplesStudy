@@ -2,6 +2,7 @@ package org.example.user.dao;
 
 import org.example.user.domain.User;
 
+import javax.xml.transform.Result;
 import java.sql.*;
 
 public class UserDao {//abstract 상속을 사용
@@ -19,7 +20,6 @@ public class UserDao {//abstract 상속을 사용
         this.connectionMaker = connectionMaker;
     }
     public void add(User user) throws ClassNotFoundException, SQLException{
-        //
         Connection c = connectionMaker.makeConnection();
         //timezone 설정, jdbc drvier import
         PreparedStatement ps = c.prepareStatement("insert into users(id, name, password) values(?,?,?)");
@@ -35,7 +35,6 @@ public class UserDao {//abstract 상속을 사용
     }
 
     public User get(String id) throws ClassNotFoundException, SQLException{
-        //
         Connection c = connectionMaker.makeConnection();
 
         PreparedStatement ps = c.prepareStatement(
@@ -55,6 +54,31 @@ public class UserDao {//abstract 상속을 사용
         c.close();
 
         return user;
+    }
+
+    public void deleteAll() throws SQLException, ClassNotFoundException{
+        Connection c = connectionMaker.makeConnection();
+        PreparedStatement ps = c.prepareStatement(
+                "delete from users");
+        ps.executeUpdate();
+
+        ps.close();
+        c.close();
+    }
+
+    public int getCount() throws SQLException, ClassNotFoundException {
+        Connection c = connectionMaker.makeConnection();
+        PreparedStatement ps = c.prepareStatement(
+                "select count(*) from users");
+        ResultSet rs = ps.executeQuery();
+        rs.next();
+        int count = rs.getInt(1);
+
+        rs.close();
+        ps.close();
+        c.close();
+
+        return count;
     }
 
     //public abstract Connection getConnection() throws ClassNotFoundException, SQLException;

@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DConnectionMaker implements ConnectionMaker{
-    int counter = 0;
+    public int counter = 0;
     public Connection makeConnection() throws ClassNotFoundException, SQLException{
         counter ++;
         //TODO 여기에 connection counter을 넣어도 되지 않을까
@@ -16,10 +16,11 @@ public class DConnectionMaker implements ConnectionMaker{
         Class.forName(classname);
         Connection c = DriverManager.getConnection(
                 driverUrl, "root", "1813756");
-
-        System.out.println("counter: " + counter);
-
         return c;
+    }
+
+    public int getCounter(){
+        return counter;
     }
 
 }
