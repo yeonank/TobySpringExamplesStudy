@@ -1,10 +1,12 @@
 package org.example.user.dao;
 
+import org.example.user.interfaces.ConnectionMaker;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class DConnectionMaker implements ConnectionMaker{
+public class DConnectionMaker implements ConnectionMaker {
     public int counter = 0;
     public Connection makeConnection() throws ClassNotFoundException, SQLException{
         counter ++;

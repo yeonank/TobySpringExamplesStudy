@@ -1,4 +1,4 @@
-package org.example.user.dao;
+package org.example.user.interfaces;
 
 import java.sql.Connection;
 import java.sql.SQLException;

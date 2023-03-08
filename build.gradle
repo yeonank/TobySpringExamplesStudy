@@ -29,7 +29,7 @@ repositories {
 
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
     implementation 'mysql:mysql-connector-java:8.0.21'
 
     implementation('org.springframework.boot:spring-boot-starter-web')
@@ -37,5 +37,7 @@ dependencies {
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.1.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.1.0'
+    implementation "org.springframework.boot:spring-boot-starter-jdbc"
+    //implementaion group: 'org.springframework', name: 'spring-test', version: '6.0.6'
 
 }

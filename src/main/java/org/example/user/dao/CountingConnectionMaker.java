@@ -1,9 +1,11 @@
 package org.example.user.dao;
 
+import org.example.user.interfaces.ConnectionMaker;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class CountingConnectionMaker implements ConnectionMaker{
+public class CountingConnectionMaker implements ConnectionMaker {
     int counter = 0;
     private ConnectionMaker realConnectionMaker;
 
