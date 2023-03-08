@@ -5,25 +5,39 @@ import org.example.user.dao.factory.DaoFactory;
 import org.example.user.domain.User;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 
 import java.sql.SQLException;
 
+@RunWith(SpringJUnit4ClassRunner.class)//스프링 테스트 컨텍스트 프레임워크
+@ContextConfiguration(locations = "/applicationContext.xml")//AC 저장된 위치
 public class UserDaoTest {
+    @Autowired//AC에서 자동으로 자기 자신 빈 등록
+    private ApplicationContext context;//테스트 오브젝트 생성 후 컨테이너에 의해 자동으로 주입됨
+    @Autowired
     private UserDao dao;
     private User user1;
     private User user2;
     private User user3;
     @Before
     public void setup(){
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
-        this.dao = context.getBean("userDao", UserDao.class);
+        //AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
+        //this.dao = this.context.getBean("userDao", UserDao.class);
 
         user1 = new User("gyumee", "박성철", "springno1");
         user2 = new User("leegw700", "이길원", "springno2");
         user3 = new User("bumjin", "박범진", "springno3");
+
+        System.out.println(this.context);//@Before가 실행돼도 AC는 동일함
+        System.out.println(this);//UserDaoTest는 다르다
     }
     @Test
     public void addAndGet() throws SQLException, ClassNotFoundException{
