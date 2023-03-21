@@ -9,28 +9,31 @@ import javax.sql.DataSource;
 import java.sql.*;
 
 public class UserDao {//abstract 상속을 사용
-    //ConnectionMaker connectionMaker;
     private DataSource dataSource;
     //private Connection c와 같이 싱글톤객체에서는 상태가 변하는 변수를 갖으면 안된다
-
+    private JdbcContext jdbcContext;
     public UserDao() {
     }
-   /* public UserDao(ConnectionMaker connectionMaker){
-        //connectionMaker = new DConnectionMaker()의 형태에서 벗어나 객체의 클래스 종속성을 없애기 위해 외부에서 객체를 주입
-        this.connectionMaker = connectionMaker;
-    }*/
 
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
-    //수정자 메소드를 이용한 생성자 주입
-    /*public void setConnectionMaker(ConnectionMaker connectionMaker){
-        this.connectionMaker = connectionMaker;
-    }*/
-    public void add(User user) throws SQLException {
-        StatementStrategy st = new AddStatement(user);
-        jdbcContextWithStatementStrategy(st);
+    public void setJdbcContext(JdbcContext jdbcContext){
+        this.jdbcContext = jdbcContext;
+    }
+
+    public void add(final User user) throws SQLException {//내부 클래스에서 외부 로컬 변수 접근 위해 final 설정
+        this.jdbcContext.workWithStatementStrategy(new StatementStrategy() {
+            public PreparedStatement makePreparesStatement(Connection c) throws SQLException {
+                PreparedStatement ps = c.prepareStatement(
+                        "insert into users(id, name, password) values(?,?,?)");
+                ps.setString(1, user.getId());
+                ps.setString(2, user.getName());
+                ps.setString(3, user.getPassword());
+                return ps;
+            }
+        });
     }
 
     public User get(String id) throws SQLException, NoReturnException {
@@ -61,8 +64,13 @@ public class UserDao {//abstract 상속을 사용
     }
 
     public void deleteAll() throws SQLException {
-        StatementStrategy st = new DeleteAllStatement();
-        jdbcContextWithStatementStrategy(st);
+        this.jdbcContext.workWithStatementStrategy(
+            new StatementStrategy() {
+                public PreparedStatement makePreparesStatement(Connection c) throws SQLException {
+                return c.prepareStatement(
+                        "delete from users");
+            }
+        });
     }
 
     public int getCount() throws SQLException {
@@ -97,52 +105,6 @@ public class UserDao {//abstract 상속을 사용
                     c.close();
                 } catch (SQLException e) {
                 }
-            }
-        }
-    }
-
-    public class DeleteAllStatement implements StatementStrategy {
-        public PreparedStatement makePreparesStatement(Connection c) throws SQLException {
-            PreparedStatement ps = c.prepareStatement(
-                    "delete from users");
-            return ps;
-        }
-    }
-
-    public class AddStatement implements StatementStrategy {
-        User user;
-        public AddStatement(User user){
-            this.user = user;
-        }
-        public PreparedStatement makePreparesStatement(Connection c) throws SQLException {
-            PreparedStatement ps = c.prepareStatement(
-                    "insert into users(id, name, password) values(?,?,?)");
-            ps.setString(1, user.getId());
-            ps.setString(2, user.getName());
-            ps.setString(3, user.getPassword());
-            return ps;
-        }
-    }
-    public void jdbcContextWithStatementStrategy(StatementStrategy stmt) throws SQLException{
-        Connection c = null;
-        PreparedStatement ps = null;
-
-        try {
-            c = dataSource.getConnection();
-            ps = stmt.makePreparesStatement(c);
-            ps.executeUpdate();
-        }catch (SQLException e){
-            throw e;
-        }finally {
-            if (ps != null){
-                try{
-                    ps.close();
-                }catch (SQLException e){}
-            }
-            if(c!= null){
-                try {
-                    c.close();
-                }catch(SQLException e){}
             }
         }
     }
