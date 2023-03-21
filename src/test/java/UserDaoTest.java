@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -16,6 +17,7 @@ import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 
 import java.sql.SQLException;
+import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)//스프링 테스트 컨텍스트 프레임워크
 @ContextConfiguration(locations = "/applicationContext.xml")//AC 저장된 위치
@@ -76,11 +78,43 @@ public class UserDaoTest {
         assertThat(dao.getCount(), is(3));
     }
 
-    @Test(expected = NoReturnException.class)
+    @Test(expected = EmptyResultDataAccessException.class)
     public void getUserFailure() throws SQLException, ClassNotFoundException{
         dao.deleteAll();
         assertThat(dao.getCount(), is(0));
 
         dao.get("unknown_id");
+    }
+
+    @Test
+    public void getAll(){
+        dao.deleteAll();
+
+        List<User> user0_L = dao.getAll();
+        assertThat(user0_L.size(), is(0));
+
+        dao.add(user1);
+        List<User> user1_L = dao.getAll();
+        assertThat(user1_L.size(), is(1));
+        checkSameUser(this.user1, user1_L.get(0));
+
+        dao.add(user2);
+        List<User> user2_L = dao.getAll();
+        assertThat(user2_L.size(), is(2));
+        checkSameUser(this.user1, user2_L.get(0));
+        checkSameUser(this.user2, user2_L.get(1));
+
+        dao.add(user3);
+        List<User> user3_L = dao.getAll();
+        assertThat(user3_L.size(), is(3));
+        checkSameUser(this.user3, user3_L.get(0));
+        checkSameUser(this.user1, user3_L.get(1));
+        checkSameUser(this.user2, user3_L.get(2));//알파벳순
+    }
+
+    private void checkSameUser(User user1, User user2){
+        assertThat(user1.getId(), is(user2.getId()));
+        assertThat(user1.getName(), is(user2.getName()));
+        assertThat(user1.getPassword(), is(user2.getPassword()));
     }
 }
