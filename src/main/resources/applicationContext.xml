@@ -5,10 +5,6 @@
     <bean id = "connectionMaker" class = "org.example.user.dao.DConnectionMaker"/>
     <bean id = "userDao" class = "org.example.user.dao.UserDao">
         <property name="dataSource" ref = "dataSource"/>
-        <property name="jdbcContext" ref = "jdbcContext"/>
-    </bean>
-    <bean id = "jdbcContext" class = "org.example.user.dao.JdbcContext">
-        <property name="dataSource" ref="dataSource"/>
     </bean>
     <bean id = "dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
         <property name="driverClass" value="com.mysql.cj.jdbc.Driver"/>

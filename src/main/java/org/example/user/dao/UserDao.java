@@ -16,11 +16,9 @@ public class UserDao {//abstract 상속을 사용
     }
 
     public void setDataSource(DataSource dataSource) {
+        this.jdbcContext = new JdbcContext();
+        this.jdbcContext.setDataSource(dataSource);//수동 di
         this.dataSource = dataSource;
-    }
-
-    public void setJdbcContext(JdbcContext jdbcContext){
-        this.jdbcContext = jdbcContext;
     }
 
     public void add(final User user) throws SQLException {//내부 클래스에서 외부 로컬 변수 접근 위해 final 설정
@@ -64,13 +62,7 @@ public class UserDao {//abstract 상속을 사용
     }
 
     public void deleteAll() throws SQLException {
-        this.jdbcContext.workWithStatementStrategy(
-            new StatementStrategy() {
-                public PreparedStatement makePreparesStatement(Connection c) throws SQLException {
-                return c.prepareStatement(
-                        "delete from users");
-            }
-        });
+        this.jdbcContext.executeSql("delete from users");
     }
 
     public int getCount() throws SQLException {
