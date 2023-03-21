@@ -1,5 +1,6 @@
 package org.example.user.dao;
 
+import com.mysql.cj.x.protobuf.MysqlxPrepare;
 import org.example.Exception.NoReturnException;
 import org.example.user.domain.User;
 
@@ -25,7 +26,7 @@ public class UserDao {//abstract 상속을 사용
     /*public void setConnectionMaker(ConnectionMaker connectionMaker){
         this.connectionMaker = connectionMaker;
     }*/
-    public void add(User user) throws ClassNotFoundException, SQLException{
+    public void add(User user) throws SQLException{
         Connection c = dataSource.getConnection();
         //timezone 설정, jdbc drvier import
         PreparedStatement ps = c.prepareStatement("insert into users(id, name, password) values(?,?,?)");
@@ -40,7 +41,7 @@ public class UserDao {//abstract 상속을 사용
 
     }
 
-    public User get(String id) throws ClassNotFoundException, SQLException, NoReturnException {
+    public User get(String id) throws SQLException, NoReturnException {
         Connection c = dataSource.getConnection();
 
         PreparedStatement ps = c.prepareStatement(
@@ -67,29 +68,65 @@ public class UserDao {//abstract 상속을 사용
         return user;
     }
 
-    public void deleteAll() throws SQLException, ClassNotFoundException{
-        Connection c = dataSource.getConnection();
-        PreparedStatement ps = c.prepareStatement(
-                "delete from users");
-        ps.executeUpdate();
+    public void deleteAll() throws SQLException{
+
+        Connection c = null;
+        PreparedStatement ps = null;
+        try{
+            c = dataSource.getConnection();
+            ps = c.prepareStatement(
+                    "delete from users");
+            ps.executeUpdate();
+        }catch(SQLException e){
+            throw e;
+        }finally{
+            if (ps != null){
+                try{
+                    ps.close();
+                }catch (SQLException e){}
+            }
+            if(c!= null){
+                try {
+                    c.close();
+                }catch(SQLException e){}
+            }
+        }
 
         ps.close();
         c.close();
     }
 
-    public int getCount() throws SQLException, ClassNotFoundException {
-        Connection c = dataSource.getConnection();
-        PreparedStatement ps = c.prepareStatement(
-                "select count(*) from users");
-        ResultSet rs = ps.executeQuery();
-        rs.next();
-        int count = rs.getInt(1);
+    public int getCount() throws SQLException{
+        Connection c = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try{
+            c = dataSource.getConnection();
 
-        rs.close();
-        ps.close();
-        c.close();
-
-        return count;
+            ps = c.prepareStatement(
+                    "select count(*) from users");
+            rs = ps.executeQuery();
+            rs.next();
+            return rs.getInt(1);
+        }catch (SQLException e){
+            throw e;
+        }finally {
+            if (rs != null){
+                try{
+                    rs.close();
+                }catch (SQLException e){}
+            }
+            if (ps != null){
+                try{
+                    ps.close();
+                }catch (SQLException e){}
+            }
+            if(c!= null){
+                try {
+                    c.close();
+                }catch(SQLException e){}
+            }
+        }
     }
 
     //public abstract Connection getConnection() throws ClassNotFoundException, SQLException;
