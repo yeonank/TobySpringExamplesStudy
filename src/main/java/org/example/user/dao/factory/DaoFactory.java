@@ -2,7 +2,7 @@ package org.example.user.dao.factory;
 
 import org.example.user.interfaces.ConnectionMaker;
 import org.example.user.dao.DConnectionMaker;
-import org.example.user.dao.UserDao;
+import org.example.user.dao.UserDaoJdbc;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -13,8 +13,8 @@ import javax.sql.DataSource;
 public class DaoFactory {//팩토리를 통해 객체를 생성해서 반환함으로 Main에서 ConnectionMaker을 결정하는 것을 막음
 
     @Bean//Ioc용 오브젝트 생성 메소드
-    public UserDao userDao() {
-        UserDao userDao = new UserDao();
+    public UserDaoJdbc userDao() {
+        UserDaoJdbc userDao = new UserDaoJdbc();
         userDao.setDataSource(dataSource());
         return userDao;
         //return new UserDao(connectionMaker());

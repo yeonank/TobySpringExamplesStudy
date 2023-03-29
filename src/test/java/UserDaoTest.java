@@ -1,17 +1,21 @@
-import org.example.Exception.NoReturnException;
-import org.example.user.dao.DConnectionMaker;
-import org.example.user.dao.UserDao;
-import org.example.user.dao.factory.DaoFactory;
+import org.example.user.dao.UserDaoJdbc;
 import org.example.user.domain.User;
+import org.example.user.interfaces.UserDao;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
+import org.springframework.jdbc.support.SQLExceptionTranslator;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.sql.DataSource;
 
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.is;
@@ -26,6 +30,8 @@ public class UserDaoTest {
     private ApplicationContext context;//테스트 오브젝트 생성 후 컨테이너에 의해 자동으로 주입됨
     @Autowired
     private UserDao dao;
+    @Autowired
+    private DataSource dataSource;
     private User user1;
     private User user2;
     private User user3;
@@ -116,5 +122,27 @@ public class UserDaoTest {
         assertThat(user1.getId(), is(user2.getId()));
         assertThat(user1.getName(), is(user2.getName()));
         assertThat(user1.getPassword(), is(user2.getPassword()));
+    }
+
+    @Test(expected = DataAccessException.class)
+    public void duplicateKey(){
+        dao.deleteAll();
+        dao.add(user1);
+        dao.add(user1);//중복키 예외 발생 확인
+    }
+
+    @Test
+    public void sqlExceptionTranslate(){
+        dao.deleteAll();
+
+        try{
+            dao.add(user1);
+            dao.add(user1);
+        }catch(DuplicateKeyException ex){
+            SQLException sqlEx = (SQLException) ex.getRootCause();//sqlexception을 적절한 DataAccessException으로 변경해 준다.(DuplicateKeyException)
+            SQLExceptionTranslator set = new SQLErrorCodeSQLExceptionTranslator(this.dataSource);//에러 코드 변환에 필요한 db 종류 알아내기
+            assertThat(set.translate(null, null, sqlEx), is(DataAccessException.class));
+            System.out.println("translate1: " + set.translate(null, null, sqlEx));
+        }
     }
 }

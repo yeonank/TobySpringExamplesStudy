@@ -1,9 +1,7 @@
 package org.example.user.dao;
 
-import com.mysql.cj.x.protobuf.MysqlxPrepare;
-import org.example.Exception.NoReturnException;
 import org.example.user.domain.User;
-import org.example.user.interfaces.StatementStrategy;
+import org.example.user.interfaces.UserDao;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -11,7 +9,7 @@ import javax.sql.DataSource;
 import java.sql.*;
 import java.util.List;
 
-public class UserDao {//abstract 상속을 사용
+public class UserDaoJdbc implements UserDao {//abstract 상속을 사용
     //private DataSource dataSource;
     //private Connection c와 같이 싱글톤객체에서는 상태가 변하는 변수를 갖으면 안된다
     //private JdbcContext jdbcContext;
@@ -25,7 +23,7 @@ public class UserDao {//abstract 상속을 사용
             return user;
         }
     };
-    public UserDao() {
+    public UserDaoJdbc() {
     }
 
     public void setDataSource(DataSource dataSource) {

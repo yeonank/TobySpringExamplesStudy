@@ -2,7 +2,7 @@ package org.example.user.dao.tests;
 
 import org.example.user.dao.CountingConnectionMaker;
 import org.example.user.dao.factory.CountingDaoFactory;
-import org.example.user.dao.UserDao;
+import org.example.user.dao.UserDaoJdbc;
 import org.example.user.domain.User;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -12,7 +12,7 @@ public class UserDaoConnectionCountingTest {
     public static void main(String[] args) throws ClassNotFoundException, SQLException{
         AnnotationConfigApplicationContext context =
                 new AnnotationConfigApplicationContext(CountingDaoFactory.class);
-        UserDao dao = context.getBean("userDao", UserDao.class);//userDao 실행할 때마다 카운팅도 됨
+        UserDaoJdbc dao = context.getBean("userDao", UserDaoJdbc.class);//userDao 실행할 때마다 카운팅도 됨
 
         ////////////Connection Test
         User user = new User();
